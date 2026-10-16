@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Carbonex – Carbon Footprint Intelligence Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#150B1C; --surface:#1F1329; --surface2:#2A1A38; --card:linear-gradient(180deg,rgba(255,220,238,.075),rgba(255,220,238,.028));
+  --ink:#FCEFF5; --muted:#BBA7C9; --line:rgba(255,214,234,.13);
+  --green:#FF6AA5; --green-soft:rgba(255,106,165,.15); --flare:#FF8A3D; --flare-soft:rgba(255,138,61,.16);
+  --teal:#B9A7F2; --teal-soft:rgba(185,167,242,.16); --amber:#F6C9A8; --amber-soft:rgba(246,201,168,.14); --vio:#B9A7F2; --pink:#FFC7DD;
+  --on-green:#2A0F1E; --glow1:rgba(255,106,165,.24); --glow2:rgba(185,167,242,.24); --glow3:rgba(246,201,168,.12);
+  --grad:linear-gradient(100deg,#B9A7F2,#FF8FC0 50%,#FF8A3D);
+  --r-lg:20px; --r-md:12px; --r-sm:8px;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px); color-scheme:dark;
+}
+@media (prefers-color-scheme: light){ :root:not([data-theme="dark"]){ --bg:#FFF3EE;--surface:#FFFFFF;--surface2:#FDEBF1;--card:linear-gradient(180deg,#FFFFFF,#FFF8F5);--ink:#2B1330;--muted:#76607F;--line:rgba(43,19,48,.12);--green:#D02470;--green-soft:rgba(208,36,112,.10);--flare:#D9570F;--flare-soft:rgba(217,87,15,.11);--teal:#6F58D6;--teal-soft:rgba(111,88,214,.11);--amber:#9A5A2E;--amber-soft:rgba(246,201,168,.45);--vio:#B9A7F2;--pink:#FFC7DD;--on-green:#2A0F1E;--glow1:rgba(255,143,192,.35);--glow2:rgba(185,167,242,.35);--glow3:rgba(246,201,168,.40);--grad:linear-gradient(100deg,#B9A7F2,#FF8FC0 50%,#FF8A3D);color-scheme:light; } }
+:root[data-theme="light"]{ --bg:#FFF3EE;--surface:#FFFFFF;--surface2:#FDEBF1;--card:linear-gradient(180deg,#FFFFFF,#FFF8F5);--ink:#2B1330;--muted:#76607F;--line:rgba(43,19,48,.12);--green:#D02470;--green-soft:rgba(208,36,112,.10);--flare:#D9570F;--flare-soft:rgba(217,87,15,.11);--teal:#6F58D6;--teal-soft:rgba(111,88,214,.11);--amber:#9A5A2E;--amber-soft:rgba(246,201,168,.45);--vio:#B9A7F2;--pink:#FFC7DD;--on-green:#2A0F1E;--glow1:rgba(255,143,192,.35);--glow2:rgba(185,167,242,.35);--glow3:rgba(246,201,168,.40);--grad:linear-gradient(100deg,#B9A7F2,#FF8FC0 50%,#FF8A3D);color-scheme:light; }
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.6 "Manrope",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;min-height:100%;position:relative;overflow-x:hidden}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(520px 380px at var(--mx,30%) var(--my,12%),var(--glow1),transparent 70%),radial-gradient(900px 560px at 88% -8%,var(--glow2),transparent 70%),radial-gradient(700px 520px at -5% 35%,var(--glow3),transparent 70%)}
+h1,h2,h3{font-family:"Sora","Manrope",system-ui,Arial,sans-serif;line-height:1.12;margin:0;letter-spacing:-0.025em}
+h1{font-size:clamp(2.4rem,6vw,4.5rem);font-weight:600;letter-spacing:-0.04em;line-height:1.04}
+h2{font-size:clamp(1.55rem,3.2vw,2.3rem);font-weight:600}
+h3{font-size:1.08rem;font-weight:600;letter-spacing:-0.015em}
+p{margin:0 0 .8em;max-width:68ch}
+a{color:var(--teal)}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--teal);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+.grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+/* floating pill nav */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;padding:12px 12px 0}
+.top .wrap{display:flex;align-items:center;gap:12px;max-width:1160px;padding:7px 8px 7px 16px;border:1px solid var(--line);border-radius:999px;
+  background:color-mix(in srgb,var(--surface) 70%,transparent);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4)}
+.brand{display:flex;align-items:center;gap:10px;font-family:"Sora",system-ui,sans-serif;font-weight:700;font-size:1.15rem;letter-spacing:-0.03em;white-space:nowrap}
+.brand svg{flex:none}
+.brand small{display:none;font:500 .7rem/1.1 "Manrope",sans-serif;color:var(--muted);letter-spacing:0;max-width:11ch;white-space:normal}
+@media (min-width:1080px){.brand small{display:block}}
+nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1;justify-content:center}
+nav::-webkit-scrollbar{display:none}
+nav button{background:none;border:0;padding:8px 14px;border-radius:999px;cursor:pointer;white-space:nowrap;color:var(--muted);font-weight:600;font-size:.92rem;transition:color .15s,background .15s}
+nav button:hover{color:var(--ink)}
+nav button[aria-selected="true"]{background:var(--green-soft);color:var(--green)}
+.ico{flex:none;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:transparent;cursor:pointer;display:grid;place-items:center}
+.ico:hover{border-color:var(--ink)}
+.chip{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.76rem;font-weight:700;background:var(--amber-soft);color:var(--amber);white-space:nowrap}
+.chip.g{background:var(--green-soft);color:var(--green)} .chip.f{background:var(--flare-soft);color:var(--flare)} .chip.t{background:var(--teal-soft);color:var(--teal)}
+@media (max-width:760px){.top .wrap>.chip{display:none}}
+main{padding:28px 0 72px}
+section.tab{display:none} section.tab.active{display:block}
+.lead{font-size:1.1rem;color:var(--muted);max-width:60ch}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))} .g3{grid-template-columns:repeat(3,minmax(0,1fr))} .g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:900px){.g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.g2,.g3,.g4{grid-template-columns:minmax(0,1fr)} .top .wrap{gap:8px;padding-left:12px}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:22px}
+.card.flat{background:var(--surface2)}
+.kpi .v{font:600 2rem/1 "Sora",sans-serif;letter-spacing:-0.04em;font-variant-numeric:tabular-nums}
+.kpi .l{color:var(--muted);font-size:.88rem;margin-top:8px}
+.muted{color:var(--muted)} .small{font-size:.86rem}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.btn{border:1px solid var(--ink);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;cursor:pointer;font-weight:700;transition:transform .15s,box-shadow .2s}
+.btn:hover:not(:disabled){transform:translateY(-1px)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)} .btn.ghost:hover:not(:disabled){border-color:var(--ink)}
+.btn.green{background:var(--grad);border-color:transparent;color:var(--on-green);box-shadow:0 10px 30px -10px var(--glow1)}
+.btn.lg{padding:14px 26px;font-size:1rem}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+label{font-size:.86rem;color:var(--muted);display:block;margin-bottom:5px}
+input[type=number],input[type=text],select{width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface2);min-height:42px;transition:border-color .15s}
+input[type=number]:hover,input[type=text]:hover,select:hover{border-color:var(--muted)}
+input:focus-visible,select:focus-visible{outline:2px solid var(--teal);outline-offset:1px}
+input[type=range]{width:100%;accent-color:var(--green)}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+th{text-align:left;font-weight:600;color:var(--muted);padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap;font-size:.84rem}
+td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+tr.click{cursor:pointer} tr.click:hover td{background:var(--green-soft)}
+.scroll{overflow-x:auto;max-width:100%}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.bar{height:10px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--flare);border-radius:99px;transition:width .4s}
+.note{border-left:3px solid var(--amber);background:var(--amber-soft);color:var(--ink);padding:12px 16px;border-radius:0 var(--r-md) var(--r-md) 0;font-size:.9rem}
+pre{background:var(--surface2);border:1px solid var(--line);border-radius:var(--r-md);padding:14px;overflow:auto;font-size:.82rem;margin:0}
+textarea{border-radius:var(--r-sm)}
+h2+.lead{margin-top:10px}
+/* overview / landing */
+.hero2{display:flex;flex-direction:column;align-items:center;text-align:center;padding:52px 0 4px}
+.hero2 h1{max-width:900px}
+.hero2 .lead{margin:22px auto 30px}
+.badge{display:inline-flex;gap:10px;align-items:center;padding:5px 16px 5px 6px;border:1px solid var(--line);background:var(--card);border-radius:999px;font-size:.84rem;color:var(--muted)}
+.badge b{background:var(--green-soft);color:var(--green);padding:2px 10px;border-radius:999px;font-weight:700}
+.srcs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:26px;color:var(--muted);font-size:.84rem;align-items:center}
+.srcs span.p{padding:5px 12px;border:1px solid var(--line);border-radius:999px}
+.stage{margin-top:40px;border-radius:30px;padding:1px;background:linear-gradient(160deg,rgba(255,106,165,.55),rgba(255,255,255,.08) 38%,rgba(185,167,242,.5));box-shadow:0 50px 120px -50px var(--glow2)}
+.stage .inner{border-radius:29px;background:var(--surface);padding:16px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;text-align:left}
+@media (max-width:900px){.stage .inner{grid-template-columns:minmax(0,1fr)}}
+.ticker{background:var(--surface2);border:1px solid var(--line);border-radius:var(--r-lg);padding:22px;display:flex;flex-direction:column;gap:12px;min-height:340px}
+.ticker .big{font:600 clamp(2.8rem,8vw,4.6rem)/1.05 "Sora",sans-serif;letter-spacing:-0.045em;font-variant-numeric:tabular-nums;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.ticker .feed{display:flex;flex-direction:column;gap:6px;overflow:hidden;flex:1}
+.ticker .ev{display:flex;justify-content:space-between;gap:10px;font-size:.86rem;padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card)}
+.ticker .ev b{font-variant-numeric:tabular-nums;color:var(--flare);white-space:nowrap}
+.ticker .ev.new{animation:flash 1.2s ease-out}
+@keyframes flash{from{background:var(--flare-soft);border-color:var(--flare)}to{background:transparent}}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+.pulse{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--green);margin-right:7px;box-shadow:0 0 0 4px var(--green-soft)}
+.paused .pulse{background:#999;box-shadow:none}
+.wi{display:flex;flex-direction:column;gap:2px;background:var(--surface2)}
+.tg{border:1px solid var(--line);background:transparent;color:var(--muted);padding:7px 14px;border-radius:999px;cursor:pointer;font-weight:600;font-size:.86rem;transition:background .15s,color .15s,border-color .15s}
+.tg:hover{color:var(--ink);border-color:var(--muted)}
+.tg[aria-pressed="true"]{background:var(--green-soft);color:var(--green);border-color:var(--green)}
+.meter{height:12px;border-radius:99px;background:var(--line);overflow:hidden;margin:18px 0 16px}
+.meter i{display:block;height:100%;width:0;background:var(--grad);border-radius:99px;transition:width .4s cubic-bezier(.3,.8,.3,1)}
+.res{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.res b{display:block;font:600 1.5rem/1.1 "Sora",sans-serif;letter-spacing:-0.03em;font-variant-numeric:tabular-nums}
+.res span{display:block;font-size:.78rem;color:var(--muted);margin-top:4px;line-height:1.3}
+.bento{counter-reset:s;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px}
+.bento .card{position:relative;overflow:hidden;counter-increment:s;min-height:170px;transition:border-color .2s}
+.bento .card[data-go]{cursor:pointer}
+.bento .card[data-go]:hover{border-color:var(--green)}
+.bento .card::before{content:counter(s);display:inline-flex;width:30px;height:30px;border-radius:50%;background:var(--green-soft);color:var(--green);font-weight:700;align-items:center;justify-content:center;margin-bottom:14px;font-size:.9rem}
+.bento .card::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .25s;background:radial-gradient(280px circle at var(--px,50%) var(--py,0%),var(--green-soft),transparent 70%)}
+.bento .card:hover::after{opacity:1}
+.b2{grid-column:span 2}.b3{grid-column:span 3}.b4{grid-column:span 4}
+@media (max-width:900px){.bento{grid-template-columns:repeat(2,minmax(0,1fr))}.b2,.b3,.b4{grid-column:span 1}.b4{grid-column:span 2}}
+@media (max-width:640px){.bento{grid-template-columns:minmax(0,1fr)}.b2,.b3,.b4{grid-column:span 1}}
+.sc{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;align-items:start;padding:14px 0;border-bottom:1px solid var(--line)}
+.sc:last-child{border-bottom:0}
+.sc .sl{grid-column:2;display:flex;gap:10px;align-items:center}
+.sc .sl input{flex:1} .sc .sl span{min-width:44px;text-align:right;font-variant-numeric:tabular-nums}
+.sc input[type=checkbox]{width:20px;height:20px;margin-top:2px;accent-color:var(--green)}
+svg text{font-family:"Manrope",system-ui,sans-serif;fill:var(--ink)}
+.out{white-space:pre-wrap;line-height:1.65}
+footer{border-top:1px solid var(--line);padding:24px 0;color:var(--muted);font-size:.86rem}
+.arch{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+@media (max-width:900px){.arch{grid-template-columns:minmax(0,1fr)}}
+.arch .n{border:1px solid var(--line);background:var(--card);border-radius:var(--r-md);padding:14px;font-size:.86rem}
+.arch .n b{display:block;margin-bottom:4px;font-family:"Sora",sans-serif}
+@media print{.top,nav,.btn,footer{display:none!important}section.tab{display:block!important}}
+
+body.splash-open{overflow:hidden}
+#splash{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:var(--bg);transition:opacity .9s ease,visibility .9s;padding:20px;text-align:center}
+#splash::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(520px 520px at 50% 42%,var(--glow1),transparent 70%),radial-gradient(700px 500px at 85% 0%,var(--glow2),transparent 70%)}
+#splash.out{opacity:0;visibility:hidden;pointer-events:none}
+#flowerBtn{position:relative;background:none;border:0;cursor:pointer;padding:14px;border-radius:50%;-webkit-tap-highlight-color:transparent}
+#flowerBtn svg{display:block;overflow:visible;max-width:70vw;height:auto;filter:drop-shadow(0 0 36px var(--glow1));transition:transform 1s cubic-bezier(.2,.8,.2,1)}
+#flowerBtn:hover svg{transform:scale(1.06)}
+#splash.go #flowerBtn svg{transform:scale(2.6) rotate(45deg)}
+.bloom{transform-origin:0 0;animation:breathe 4.5s ease-in-out infinite}
+.layer{transform-origin:0 0}
+.l1{animation:spin 50s linear infinite}.l2{animation:spin 36s linear infinite reverse}.l3{animation:spin 24s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes breathe{50%{transform:scale(1.05)}}
+.sname{position:relative;font:600 clamp(2.4rem,7vw,3.8rem)/1.1 "Sora",sans-serif;letter-spacing:-0.04em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;transition:opacity .5s}
+.shint{position:relative;color:var(--muted);font-size:.92rem;transition:opacity .5s}
+#splash.go .sname,#splash.go .shint{opacity:0}
+</style>
+</head>
+<body>
+<div id="splash"><button id="flowerBtn" type="button" aria-label="Enter Carbonex"><svg viewBox="-100 -100 200 200" width="280" height="280" aria-hidden="true"><defs><linearGradient id="pg" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#B9A7F2"/><stop offset=".55" stop-color="#FF8FC0"/><stop offset="1" stop-color="#FF8A3D"/></linearGradient><radialGradient id="cg"><stop offset="0" stop-color="#FFE9D8"/><stop offset="1" stop-color="#F6C9A8"/></radialGradient></defs><g class="bloom"><g class="layer l1" fill="url(#pg)" fill-opacity=".5" stroke="url(#pg)" stroke-width="1.4"><path d="M0 0C18 -28 18 -62 0 -86C-18 -62 -18 -28 0 0Z" transform="rotate(0.0) scale(1)"/><path d="M0 0C18 -28 18 -62 0 -86C-18 -62 -18 -28 0 0Z" transform="rotate(45.0) scale(1)"/><path d="M0 0C18 -28 18 -62 0 -86C-18 -62 -18 -28 0 0Z" transform="rotate(90.0) scale(1)"/><path d="M0 0C18 -28 18 -62 0 -86C-18 -62 -18 -28 0 0Z" transform="rotate(135.0) scale(1)"/><path d="M0 0C18 -28 18 -62 0 -86C-18 -62 -18 -28 0 0Z" transform="rotate(180.0) scale(1)"/><path d="M0 0C18 -28 18 -62 0 -86C-18 -62 -18 -28 0 0Z" transform="rotate(225.0) scale(1)"/><path d="M0 0C18 -28 18 -62 0 -86C-18 -62 -18 -28 0 0Z" transform="rotate(270.0) scale(1)"/><path d="M0 0C18 -28 18 -62 0 -86C-18 -62 -18 -28 0 0Z" transform="rotate(315.0) scale(1)"/></g><g class="layer l2" fill="url(#pg)" fill-opacity=".68" stroke="url(#pg)" stroke-width="1.2"><path d="M0 0C18 -28 18 -62 0 -86C-18 -62 -18 -28 0 0Z" transform="rotate(22.5) scale(0.7)"/><path d="M0 0C18 -28 18 -62 0 -86C-18 -62 -18 -28 0 0Z" transform="rotate(67.5) scale(0.7)"/><path d="M0 0C18 -28 18 -62 0 -86C-18 -62 -18 -28 0 0Z" transform="rotate(112.5) scale(0.7)"/><path d="M0 0C18 -28 18 -62 0 -86C-18 -62 -18 -28 0 0Z" transform="rotate(157.5) scale(0.7)"/><path d="M0 0C18 -28 18 -62 0 -86C-18 -62 -18 -28 0 0Z" transform="rotate(202.5) scale(0.7)"/><path d="M0 0C18 -28 18 -62 0 -86C-18 -62 -18 -28 0 0Z" transform="rotate(247.5) scale(0.7)"/><path d="M0 0C18 -28 18 -62 0 -86C-18 -62 -18 -28 0 0Z" transform="rotate(292.5) scale(0.7)"/><path d="M0 0C18 -28 18 -62 0 -86C-18 -62 -18 -28 0 0Z" transform="rotate(337.5) scale(0.7)"/></g><g class="layer l3" fill="url(#pg)" fill-opacity=".9"><path d="M0 0C18 -28 18 -62 0 -86C-18 -62 -18 -28 0 0Z" transform="rotate(0.0) scale(0.4)"/><path d="M0 0C18 -28 18 -62 0 -86C-18 -62 -18 -28 0 0Z" transform="rotate(45.0) scale(0.4)"/><path d="M0 0C18 -28 18 -62 0 -86C-18 -62 -18 -28 0 0Z" transform="rotate(90.0) scale(0.4)"/><path d="M0 0C18 -28 18 -62 0 -86C-18 -62 -18 -28 0 0Z" transform="rotate(135.0) scale(0.4)"/><path d="M0 0C18 -28 18 -62 0 -86C-18 -62 -18 -28 0 0Z" transform="rotate(180.0) scale(0.4)"/><path d="M0 0C18 -28 18 -62 0 -86C-18 -62 -18 -28 0 0Z" transform="rotate(225.0) scale(0.4)"/><path d="M0 0C18 -28 18 -62 0 -86C-18 -62 -18 -28 0 0Z" transform="rotate(270.0) scale(0.4)"/><path d="M0 0C18 -28 18 -62 0 -86C-18 -62 -18 -28 0 0Z" transform="rotate(315.0) scale(0.4)"/></g><circle r="9" fill="url(#cg)"/></g></svg></button><div class="sname">Carbonex</div><div class="shint"><span class="pulse"></span>Tap the flower to enter</div></div>
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#B9A7F2"/><stop offset=".6" stop-color="#FF8FC0"/><stop offset="1" stop-color="#FF8A3D"/></linearGradient></defs><rect width="28" height="28" rx="9" fill="url(#lg)"/><path d="M19 9.5a6.5 6.5 0 1 0 0 9" fill="none" stroke="#2A0F1E" stroke-width="2.6" stroke-linecap="round"/></svg>Carbonex<small>Carbon Footprint Intelligence Platform</small></div>
+    <nav role="tablist" aria-label="Sections" id="nav">
+      <button role="tab" data-tab="overview" aria-selected="true">Overview</button>
+      <button role="tab" data-tab="ledger" aria-selected="false">Live ledger</button>
+      <button role="tab" data-tab="calc" aria-selected="false">Calculator</button>
+      <button role="tab" data-tab="twin" aria-selected="false">Digital twin</button>
+      <button role="tab" data-tab="advisor" aria-selected="false">AI advisor</button>
+      <button role="tab" data-tab="report" aria-selected="false">Report</button>
+      <button role="tab" data-tab="arch" aria-selected="false">How it works</button>
+    </nav>
+    <span class="chip">Demo data</span>
+    <button class="ico" id="themeBtn" type="button" aria-label="Switch light or dark theme" title="Switch theme"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 2a6 6 0 0 0 0 12z" fill="currentColor"/></svg></button>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- OVERVIEW -->
+<section class="tab active" id="tab-overview">
+  <div class="hero2">
+    <span class="badge"><b>Live</b> factory-01 is streaming detections right now</span>
+    <h1 style="margin-top:22px">See where your carbon is made, <span class="grad-text">while it is being made.</span></h1>
+    <p class="lead">Carbonex turns camera detections and meter data into a live carbon ledger, tests fixes on a digital twin of the site, and writes a costed action plan for the person who has to act on it.</p>
+    <div class="row" style="justify-content:center">
+      <button class="btn green lg" data-go="ledger">Open the live ledger</button>
+      <button class="btn ghost lg" data-go="twin">Try the digital twin</button>
+    </div>
+    <div class="srcs"><span>Reads from</span><span class="p">Cameras</span><span class="p">Smart meters</span><span class="p">Building systems</span><span class="p">Logistics and waste records</span><span class="p">Grid intensity</span></div>
+  </div>
+
+  <div class="stage"><div class="inner">
+    <div class="ticker" id="tickerCard" aria-live="off">
+      <div class="small muted"><span class="pulse"></span>factory-01 · Delhi · today’s emissions from detected activity</div>
+      <div class="big" id="bigNum">0.0</div>
+      <div class="small muted">kg CO₂e so far (grid at <span id="gridShow">710</span> g/kWh)</div>
+      <div class="feed" id="tickerFeed"></div>
+    </div>
+    <div class="card wi">
+      <h3>Try a fix on this site</h3>
+      <p class="small muted" style="margin-top:6px">Switch actions on or off and set how fully you adopt them. The same model as the Digital twin answers straight away.</p>
+      <div class="row" id="wiTg" style="margin:10px 0 14px;gap:8px"></div>
+      <label for="wi_ad">Adoption: <b id="wi_adv">100%</b></label>
+      <input type="range" id="wi_ad" min="10" max="100" step="5" value="100">
+      <div class="meter"><i id="wi_bar"></i></div>
+      <div class="res">
+        <div><b id="wi_t">0</b><span>tCO₂e saved per year</span></div>
+        <div><b id="wi_pc">0%</b><span>of site baseline</span></div>
+        <div><b id="wi_pay">–</b><span>payback, years</span></div>
+      </div>
+      <p class="small muted" id="wi_note" style="margin:14px 0 0"></p>
+    </div>
+  </div></div>
+
+  <h2 style="margin:84px 0 0;text-align:center">What one detection becomes</h2>
+  <p class="lead" style="margin:10px auto 32px;text-align:center">Six steps from a camera frame to a verified saving. Select a step to open it.</p>
+  <div class="bento">
+    <div class="card b4" data-go="ledger" tabindex="0" role="link"><h3>A camera sees an activity</h3><p class="muted small" style="margin-top:8px">Detector and tracker output a structured event: type, camera, duration, confidence.</p></div>
+    <div class="card b2" data-go="calc" tabindex="0" role="link"><h3>The ledger prices it</h3><p class="muted small" style="margin-top:8px">Activity × emission factor × grid intensity, tagged Scope 1, 2 or 3, with the factor and source kept.</p></div>
+    <div class="card b3" data-go="twin" tabindex="0" role="link"><h3>The twin tests fixes</h3><p class="muted small" style="margin-top:8px">Monte Carlo runs give a range of tonnes saved, rupees saved and payback, not one false-precise number.</p></div>
+    <div class="card b3" data-go="advisor" tabindex="0" role="link"><h3>The advisor picks a plan</h3><p class="muted small" style="margin-top:8px">An optimiser selects actions within budget; a language model explains the plan for the reader’s role.</p></div>
+    <div class="card b2" data-go="report" tabindex="0" role="link"><h3>You act and verify</h3><p class="muted small" style="margin-top:8px">Predicted savings are compared with measured ones so the model can be corrected.</p></div>
+    <div class="card b4" data-go="report" tabindex="0" role="link"><h3>Export for reporting</h3><p class="muted small" style="margin-top:8px">Ledger CSV and a summary report, organised by GHG Protocol scopes.</p></div>
+  </div>
+
+  <div class="note" style="margin-top:32px"><b>Honest scope:</b> the camera feed on this page is simulated and emission factors are editable assumptions. The pipeline, formulas, simulation and planner are real and work on any data you import. See “How it works” for what runs where.</div>
+</section>
+
+<!-- LEDGER -->
+<section class="tab" id="tab-ledger">
+  <h2>Live carbon ledger</h2>
+  <p class="lead" style="margin:8px 0 18px">Each row is one activity event in the same shape the vision model emits. Click a row to see the raw event.</p>
+  <div class="row" id="ledgerCtl" style="margin-bottom:16px">
+    <button class="btn" id="pauseBtn">Pause feed</button>
+    <button class="btn ghost" id="importBtn">Import events (JSON)</button>
+    <input type="file" id="importFile" accept="application/json,.json" hidden>
+    <button class="btn ghost" id="sampleBtn">Save sample events.json</button>
+    <button class="btn ghost" id="csvBtn">Export ledger CSV</button>
+    <button class="btn ghost" id="clearBtn">Clear ledger</button>
+    <span class="small muted" id="importMsg" role="status"></span>
+  </div>
+  <div class="grid g4" style="margin-bottom:16px">
+    <div class="card kpi"><div class="v" id="kTotal">0</div><div class="l">kg CO₂e in ledger</div></div>
+    <div class="card kpi"><div class="v" id="kCount">0</div><div class="l">events</div></div>
+    <div class="card kpi"><div class="v" id="kTop">–</div><div class="l">biggest hotspot</div></div>
+    <div class="card"><label for="gridSlider">Grid intensity (g CO₂/kWh)</label><input type="range" id="gridSlider" min="100" max="900" step="10" value="710"><div class="small muted"><span id="gridVal">710</span> g/kWh · changes Scope 2 rows instantly</div></div>
+  </div>
+  <div class="grid g2" style="margin-bottom:16px">
+    <div class="card"><h3 style="margin-bottom:8px">Hotspots by activity</h3><div class="row small" style="margin-bottom:14px;gap:14px"><span><span class="pulse" style="background:var(--flare)"></span>Scope 1 direct</span><span><span class="pulse" style="background:var(--teal)"></span>Scope 2 electricity</span><span><span class="pulse" style="background:var(--green)"></span>Scope 3 value chain</span></div><div id="hotspots"></div></div>
+    <div class="card"><h3 style="margin-bottom:12px">By scope</h3><div id="scopes"></div></div>
+  </div>
+  <div class="card"><div class="scroll"><table><thead><tr><th>Time</th><th>Source</th><th>Activity</th><th class="num">Quantity</th><th class="num">Confidence</th><th>Scope</th><th class="num">kg CO₂e</th></tr></thead><tbody id="ledgerBody"></tbody></table></div></div>
+  <div class="card flat" style="margin-top:16px"><h3 style="margin-bottom:8px">Selected event</h3><pre id="evJson">Click a row.</pre></div>
+</section>
+
+<!-- CALCULATOR -->
+<section class="tab" id="tab-calc">
+  <h2>Carbon calculator and factor register</h2>
+  <p class="lead" style="margin:8px 0 18px">CO₂e = activity data × emission factor. Edit any factor; every page recalculates. Replace the starter values with your own authoritative factors before you quote results.</p>
+  <div class="grid g2">
+    <div class="card">
+      <h3 style="margin-bottom:4px">Activity data, one month</h3><p class="small muted" style="margin-bottom:12px">Starting values match the Digital twin baseline (1.2 GWh and 40,000 L a year, divided by 12). Replace them with your own bills and logs.</p>
+      <div class="grid g2">
+        <div><label for="c_elec">Electricity (kWh per month)</label><input type="number" id="c_elec" value="100000" min="0"></div>
+        <div><label for="c_diesel">Diesel bought (litres per month)</label><input type="number" id="c_diesel" value="3333" min="0"></div>
+        <div><label for="c_idle">Truck idling (minutes per month, already inside the diesel above)</label><input type="number" id="c_idle" value="3600" min="0"></div>
+        <div><label for="c_flight">Flights (km per month)</label><input type="number" id="c_flight" value="1200" min="0"></div>
+        <div><label for="c_waste">Waste to landfill (kg per month)</label><input type="number" id="c_waste" value="10000" min="0"></div>
+        <div><label for="c_burn">Waste burned on site (kg per month)</label><input type="number" id="c_burn" value="0" min="0"></div>
+      </div>
+      <h3 style="margin:20px 0 8px">Result</h3>
+      <div class="scroll"><table><thead><tr><th>Item</th><th>Scope</th><th class="num">kg CO₂e per month</th></tr></thead><tbody id="calcBody"></tbody></table></div>
+    </div>
+    <div class="card">
+      <h3 style="margin-bottom:12px">Emission factor register</h3>
+      <div class="scroll"><table><thead><tr><th>Factor</th><th>Value</th><th>Unit</th><th>Source status</th></tr></thead><tbody id="efBody"></tbody></table></div>
+      <p class="small muted" style="margin-top:12px">Values marked “blueprint example” come from the project blueprint (diesel 2.68 kgCO₂e/L, grid 710 g/kWh). Values marked “assumption” are rough placeholders. Production use needs versioned factors from DEFRA, EPA, IPCC, IEA or the local utility, as the blueprint specifies.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TWIN -->
+<section class="tab" id="tab-twin">
+  <h2>Digital twin: what if we changed this?</h2>
+  <p class="lead" style="margin:8px 0 18px">A simplified site model of factory-01. Pick actions, set how fully they are adopted, and run 2,000 Monte Carlo draws to get a range instead of a single guess.</p>
+  <div class="card" style="margin-bottom:16px">
+    <h3 style="margin-bottom:6px">Calculation engine <span class="chip" id="apiChip">Browser (offline)</span></h3>
+    <p class="small muted" style="margin-bottom:10px">By default every number is calculated in this page. If the Carbonex backend is running, connect it and the simulation and plan are calculated by the Python API instead. If it stops responding, the page falls back to the browser.</p>
+    <div class="row"><input type="text" id="apiUrl" placeholder="http://127.0.0.1:8000" style="max-width:280px" aria-label="Backend API URL"><button class="btn green" id="apiConnect">Connect</button><button class="btn" id="apiDisconnect">Use browser only</button></div>
+    <div class="row" style="margin-top:8px"><button class="btn" id="apiCompare" disabled>Compare browser vs API</button><button class="btn" id="apiSync" disabled>Send ledger to API</button></div>
+    <p class="small" id="apiMsg" role="status" style="margin-top:8px"></p>
+  </div>
+  <div class="grid g2" style="align-items:start">
+    <div class="card">
+      <h3 style="margin-bottom:8px">Site baseline (per year)</h3>
+      <div class="grid g2">
+        <div><label for="s_elec">Electricity (kWh)</label><input type="number" id="s_elec" value="1200000" min="0"></div>
+        <div><label for="s_hvac">HVAC share of electricity (%)</label><input type="number" id="s_hvac" value="35" min="0" max="90"></div>
+        <div><label for="s_light">Lighting share (%)</label><input type="number" id="s_light" value="15" min="0" max="90"></div>
+        <div><label for="s_diesel">Fleet diesel (litres)</label><input type="number" id="s_diesel" value="40000" min="0"></div>
+        <div><label for="s_waste">Waste to landfill (tonnes)</label><input type="number" id="s_waste" value="120" min="0"></div>
+        <div><label for="s_tariff">Electricity tariff (₹/kWh)</label><input type="number" id="s_tariff" value="8" min="0" step="0.5"></div>
+        <div><label for="s_dprice">Diesel price (₹/litre)</label><input type="number" id="s_dprice" value="90" min="0"></div>
+        <div><label for="s_budget">Budget cap (₹)</label><input type="number" id="s_budget" value="5000000" min="0" step="100000"></div>
+      </div>
+      <h3 style="margin:20px 0 4px">Scenarios</h3>
+      <div id="scList"></div>
+      <div class="row" style="margin-top:14px"><button class="btn green" id="runMC">Run simulation</button><span class="small muted" id="mcMsg" role="status"></span></div>
+    </div>
+    <div>
+      <div class="grid g2" style="margin-bottom:16px">
+        <div class="card kpi"><div class="v" id="r_base">–</div><div class="l">baseline tCO₂e / year</div></div>
+        <div class="card kpi"><div class="v" id="r_red">–</div><div class="l" id="r_redl">tCO₂e saved per year, median</div></div>
+        <div class="card kpi"><div class="v" id="r_sav">–</div><div class="l">₹ saved per year, median</div></div>
+        <div class="card kpi"><div class="v" id="r_pay">–</div><div class="l">payback, years (capex <span id="r_capex">–</span>)</div></div>
+      </div>
+      <div id="r_flag"></div>
+      <div class="card" style="margin-top:16px"><h3 style="margin-bottom:8px">Each action on its own (tCO₂e/year, bar = median, line = P10 to P90)</h3><div id="chartBars" class="scroll"></div></div>
+      <div class="card" style="margin-top:16px"><h3 style="margin-bottom:8px">Combined reduction across 2,000 runs</h3><div id="chartHist" class="scroll"></div></div>
+    </div>
+  </div>
+  <p class="small muted" style="margin-top:16px">Savings percentages and costs for each action are starting assumptions, not measured results. Actions are combined sequentially so the same kWh is never saved twice (for example, solar offsets only the electricity left after HVAC and lighting cuts).</p>
+</section>
+
+<!-- ADVISOR -->
+<section class="tab" id="tab-advisor">
+  <h2>AI advisor: a plan for you</h2>
+  <p class="lead" style="margin:8px 0 18px">An optimiser chooses actions that fit your budget and goal using the digital-twin numbers. Claude then explains the plan for your role, and is only allowed to use the numbers the optimiser produced.</p>
+  <div class="grid g2" style="align-items:start">
+    <div class="card">
+      <div class="grid g2">
+        <div><label for="a_role">Your role</label><select id="a_role"><option>Facility manager</option><option>Fleet manager</option><option>Sustainability lead</option><option>Finance head</option><option>Campus student team</option></select></div>
+        <div><label for="a_budget">Budget (₹)</label><input type="number" id="a_budget" value="3000000" min="0" step="100000"></div>
+        <div><label for="a_goal">Goal: cut emissions by (%)</label><input type="number" id="a_goal" value="20" min="1" max="90"></div>
+        <div><label for="a_months">Time available (months)</label><input type="number" id="a_months" value="12" min="1" max="60"></div>
+      </div>
+      <div class="row" style="margin-top:16px"><button class="btn green" id="planBtn">Build my plan</button><button class="btn ghost" id="askBtn" hidden>Explain it with Claude</button></div>
+      <p class="small muted" style="margin-top:12px">Uses the site baseline from the Digital twin tab.</p>
+    </div>
+    <div class="card" id="planCard"><h3>Your plan</h3><p class="muted">Press “Build my plan”.</p></div>
+  </div>
+  <div class="card flat" style="margin-top:16px" id="narrCard" hidden><h3 style="margin-bottom:8px">Claude’s explanation</h3><div class="out" id="narr"></div></div>
+</section>
+
+<!-- REPORT -->
+<section class="tab" id="tab-report">
+  <h2>Verify and report</h2>
+  <p class="lead" style="margin:8px 0 18px">After an action is done, enter the measured saving. Carbonex compares it with the prediction so the model can be corrected.</p>
+  <div class="card" style="margin-bottom:16px"><div class="scroll"><table><thead><tr><th>Action in plan</th><th class="num">Predicted tCO₂e/yr (median)</th><th>Measured tCO₂e/yr</th><th class="num">Variance</th></tr></thead><tbody id="verBody"><tr><td colspan="4" class="muted">Build a plan in the AI advisor tab first.</td></tr></tbody></table></div></div>
+  <div class="grid g3">
+    <div class="card"><h3 style="margin-bottom:6px">Scope 1</h3><div class="kpi"><div class="v" id="rp1">0</div><div class="l">kg CO₂e from ledger (fuel, on-site burning)</div></div></div>
+    <div class="card"><h3 style="margin-bottom:6px">Scope 2</h3><div class="kpi"><div class="v" id="rp2">0</div><div class="l">kg CO₂e from ledger (purchased electricity)</div></div></div>
+    <div class="card"><h3 style="margin-bottom:6px">Scope 3</h3><div class="kpi"><div class="v" id="rp3">0</div><div class="l">kg CO₂e from ledger (waste to landfill, flights, outsourced freight)</div></div></div>
+  </div>
+  <div class="row" style="margin-top:16px"><button class="btn" id="repBtn">Save summary report (.html)</button><button class="btn ghost" id="csvBtn2">Save ledger (.csv)</button><span class="small muted" id="repMsg" role="status"></span></div>
+</section>
+
+<!-- ARCH -->
+<section class="tab" id="tab-arch">
+  <h2>How it works</h2>
+  <p class="lead" style="margin:8px 0 18px">The full platform design, and exactly which parts run in this demo.</p>
+  <div class="arch" style="margin-bottom:20px">
+    <div class="n"><b>1 Ingest</b>Cameras, drones, smart meters, BMS, ERP, weather, grid intensity. Kafka, MQTT, Airflow.</div>
+    <div class="n"><b>2 Vision</b>YOLOv8 or RT-DETR detects; ByteTrack tracks; activity becomes a carbon event.</div>
+    <div class="n"><b>3 Accounting</b>Activity × factor × grid intensity, Scope 1/2/3, versioned factors, audit trail.</div>
+    <div class="n"><b>4 Twin</b>Asset graph, scenario simulation, Monte Carlo, ROI and payback.</div>
+    <div class="n"><b>5 Advisor</b>RAG over policies and factors, optimiser, role-aware plan, verification loop.</div>
+  </div>
+  <div class="card" style="margin-bottom:16px"><h3 style="margin-bottom:10px">What runs in this demo</h3>
+    <div class="scroll"><table><thead><tr><th>Part</th><th>In this demo</th><th>In production</th></tr></thead><tbody>
+      <tr><td>Camera detection</td><td>Simulated events in the blueprint’s event format; your own JSON can be imported</td><td>YOLOv8 / RT-DETR on edge GPUs, trained on labelled site video</td></tr>
+      <tr><td>Carbon accounting</td><td>Real calculation in your browser with editable factors; the included FastAPI backend can run the same calculation (connect it in the Digital twin tab)</td><td>FastAPI service with versioned factor database (code in the download package)</td></tr>
+      <tr><td>Digital twin</td><td>Real Monte Carlo on a simplified site model</td><td>EnergyPlus / SUMO plus calibrated sensor data</td></tr>
+      <tr><td>Advisor</td><td>Optimiser chooses actions; Claude explains them</td><td>RAG over policies, rebates and manuals with citations and human review</td></tr>
+      <tr><td>Storage</td><td>In your browser session only</td><td>TimescaleDB, PostGIS, Delta Lake, pgvector</td></tr>
+    </tbody></table></div></div>
+  <div class="grid g2">
+    <div class="card"><h3 style="margin-bottom:8px">Privacy and trust</h3><p class="small">Faces and licence plates are blurred at the edge before any frame leaves the site. Every number in the ledger keeps its factor, version and source. High-impact recommendations go through human review. The language model never invents figures; it explains numbers the optimiser produced.</p></div>
+    <div class="card"><h3 style="margin-bottom:8px">How success is measured</h3><p class="small">Detection accuracy (mAP), tonnes identified versus tonnes verified, recommendation adoption, simulation error against real outcomes, event-to-insight latency, and cost per tonne CO₂e saved.</p></div>
+  </div>
+</section>
+
+</main>
+<div id="fb" class="card" hidden style="position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));max-width:760px;margin:0 auto;z-index:30;box-shadow:0 10px 40px rgba(0,0,0,.35)"><div class="row" style="justify-content:space-between"><b>File: <span id="fbName">file</span></b><button class="btn ghost" id="fbClose">Close</button></div><p class="small muted" style="margin:6px 0">Saving files is not available in this view, so here is the content. Copy it and paste it into a file with the name above.</p><textarea id="fbText" readonly aria-label="File content" style="width:100%;height:160px;font:12px/1.4 monospace;border:1px solid var(--line);border-radius:6px;background:var(--surface2);color:var(--ink);padding:8px"></textarea><div class="row" style="margin-top:8px"><button class="btn green" id="fbCopy">Copy to clipboard</button><span class="small muted" id="fbMsg" role="status"></span></div></div>
+<footer><div class="wrap">Carbonex · hackathon prototype · figures on this page come from demo data and editable assumptions, not from a certified inventory.</div></footer>
+
+<script>
+(function(){var s=document.getElementById("splash"),b=document.getElementById("flowerBtn");
+document.body.classList.add("splash-open");
+function enter(){if(s.classList.contains("go"))return;s.classList.add("go");
+setTimeout(function(){s.classList.add("out");document.body.classList.remove("splash-open");window.scrollTo(0,0)},450);
+setTimeout(function(){s.style.display="none"},1500)}
+b.addEventListener("click",enter);try{b.focus({preventScroll:true})}catch(e){}})();
+</script>
+<script>
+(function(){
+"use strict";
+/* ---------- helpers ---------- */
+var $=function(id){return document.getElementById(id)};
+var nf=new Intl.NumberFormat("en-IN",{maximumFractionDigits:1});
+var nf0=new Intl.NumberFormat("en-IN",{maximumFractionDigits:0});
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function inr(n){ if(!isFinite(n)) return "–"; var a=Math.abs(n); if(a>=1e7) return "₹"+nf.format(n/1e7)+" Cr"; if(a>=1e5) return "₹"+nf.format(n/1e5)+" L"; return "₹"+nf0.format(n); }
+function num(id,d){var v=parseFloat($(id).value); return isFinite(v)?v:(d||0)}
+
+/* ---------- tabs ---------- */
+function showTab(t){
+  document.querySelectorAll("section.tab").forEach(function(s){s.classList.toggle("active",s.id==="tab-"+t)});
+  document.querySelectorAll("#nav button").forEach(function(b){b.setAttribute("aria-selected",b.dataset.tab===t?"true":"false")});
+  window.scrollTo(0,0);
+  if(t==="overview") renderWI();
+  if(t==="report") renderReport();
+  if(t==="twin" && !lastTwin) runMC();
+  if(t==="advisor" && !lastPlan) buildPlan();
+}
+document.querySelectorAll("#nav button").forEach(function(b){b.addEventListener("click",function(){showTab(b.dataset.tab)})});
+document.querySelectorAll("[data-go]").forEach(function(b){b.addEventListener("click",function(){showTab(b.dataset.go)})});
+
+/* ---------- emission factors (editable) ---------- */
+var EF={
+  diesel:{label:"Diesel combustion",v:2.68,unit:"kgCO₂e/litre",src:"blueprint example (DEFRA)"},
+  grid:{label:"Grid electricity",v:710,unit:"gCO₂/kWh",src:"blueprint example (Electricity Maps)"},
+  idleLph:{label:"Heavy truck idling fuel burn",v:2.4,unit:"litres/hour",src:"assumption – verify"},
+  hvacKw:{label:"HVAC draw, one zone",v:3.6,unit:"kW",src:"assumption – verify"},
+  lightKw:{label:"Lighting draw, one zone",v:1.2,unit:"kW",src:"assumption – verify"},
+  burn:{label:"Open burning of mixed waste",v:1.5,unit:"kgCO₂e/kg",src:"assumption – verify"},
+  flight:{label:"Flight, per passenger-km",v:0.15,unit:"kgCO₂e/km",src:"assumption – verify"},
+  landfill:{label:"Mixed waste to landfill",v:0.45,unit:"kgCO₂e/kg",src:"assumption – verify"},
+  freight:{label:"Outsourced road freight",v:0.1,unit:"kgCO₂e/tonne-km",src:"assumption – verify"}
+};
+function renderEF(){
+  var h="";
+  Object.keys(EF).forEach(function(k){
+    var e=EF[k];
+    h+="<tr><td>"+esc(e.label)+"</td><td><input type='number' step='any' min='0' value='"+e.v+"' data-ef='"+k+"' aria-label='"+esc(e.label)+"' style='width:90px'></td><td>"+esc(e.unit)+"</td><td><span class='chip "+(e.src.indexOf("assumption")>=0?"":"g")+"'>"+esc(e.src)+"</span></td></tr>";
+  });
+  $("efBody").innerHTML=h;
+  $("efBody").querySelectorAll("input").forEach(function(i){i.addEventListener("input",function(){
+    var v=parseFloat(i.value); if(isFinite(v)&&v>=0){EF[i.dataset.ef].v=v; if(i.dataset.ef==="grid"){$("gridSlider").value=Math.min(900,Math.max(100,v));} refreshAll();}
+  })});
+}
+
+/* ---------- activity events & ledger ---------- */
+var TYPES={
+  truck_idling:{label:"Truck idling",unit:"minutes",scope:1,calc:function(q){return q/60*EF.idleLph.v*EF.diesel.v}},
+  hvac_unoccupied:{label:"HVAC on, room empty",unit:"minutes",scope:2,calc:function(q){return q/60*EF.hvacKw.v*EF.grid.v/1000}},
+  lights_unoccupied:{label:"Lights on, room empty",unit:"minutes",scope:2,calc:function(q){return q/60*EF.lightKw.v*EF.grid.v/1000}},
+  waste_burning:{label:"Waste burning",unit:"kg",scope:1,calc:function(q){return q*EF.burn.v}},
+  waste_landfill:{label:"Waste sent to landfill",unit:"kg",scope:3,calc:function(q){return q*EF.landfill.v}},
+  third_party_freight:{label:"Outsourced freight",unit:"tonne-km",scope:3,calc:function(q){return q*EF.freight.v}},
+  flight_travel:{label:"Business flight",unit:"km",scope:3,calc:function(q){return q*EF.flight.v}}
+};
+var SCOPEINFO={
+  1:{name:"Scope 1 · Direct",color:"var(--flare)",def:"Fuel and waste burned by things you own or control, on your own site.",ex:"Truck idling, waste burning",src:"Cameras and fuel data"},
+  2:{name:"Scope 2 · Purchased electricity",color:"var(--teal)",def:"Emissions from the power station that supplies your electricity. You cause them by using power, even though the chimney is elsewhere.",ex:"HVAC and lights left on in empty rooms",src:"Cameras and smart meters"},
+  3:{name:"Scope 3 · Value chain",color:"var(--green)",def:"Everything linked to your business that happens outside your own sites and meters.",ex:"Waste hauled to landfill, flights, outsourced freight",src:"Business systems (waste vendor, travel, logistics), not cameras"}
+};
+var events=[]; var paused=false; var selected=null;
+var CAMS={truck_idling:["cam-07","cam-02"],hvac_unoccupied:["cam-11","cam-12"],lights_unoccupied:["cam-11","cam-14"],waste_burning:["cam-19"],waste_landfill:["vendor-manifest","cam-20"],third_party_freight:["erp-logistics"],flight_travel:["expense-system"]};
+function rnd(a,b){return a+Math.random()*(b-a)}
+function pick(a){return a[Math.floor(Math.random()*a.length)]}
+function makeEvent(back,force){
+  var MIX=[["truck_idling",8],["waste_burning",2],["hvac_unoccupied",7],["lights_unoccupied",4],["waste_landfill",2],["third_party_freight",1],["flight_travel",1]];
+  var QR={truck_idling:[5,45],waste_burning:[2,12],hvac_unoccupied:[30,180],lights_unoccupied:[30,180],waste_landfill:[5,40],third_party_freight:[20,150],flight_travel:[40,250]};
+  var tot=0; MIX.forEach(function(m){tot+=m[1]}); var r=Math.random()*tot, t=MIX[0][0];
+  for(var i=0;i<MIX.length;i++){ if(r<MIX[i][1]){t=MIX[i][0];break} r-=MIX[i][1]; }
+  if(force) t=force;
+  var q=Math.round(rnd(QR[t][0],QR[t][1]));
+  var end=new Date(Date.now()-(back||0)*1000);
+  var dur=(t==="truck_idling"||t==="hvac_unoccupied"||t==="lights_unoccupied")?q*60000:(t==="waste_burning"?q*20000:0);
+  var start=new Date(end.getTime()-dur);
+  return {site_id:"factory-01",camera_id:pick(CAMS[t]),activity_type:t,confidence:Math.round(rnd(.78,.98)*100)/100,start_ts:start.toISOString(),end_ts:end.toISOString(),quantity:q,unit:TYPES[t].unit,metadata:t==="truck_idling"?{vehicle_class:"heavy_truck"}:{}};
+}
+function evCO2(e){var T=TYPES[e.activity_type]; return T?T.calc(e.quantity):0}
+function evScope(e){var T=TYPES[e.activity_type]; return T?T.scope:3}
+function totals(){
+  var tot=0,by={},sc={1:0,2:0,3:0};
+  events.forEach(function(e){var c=evCO2(e); tot+=c; by[e.activity_type]=(by[e.activity_type]||0)+c; sc[evScope(e)]+=c;});
+  return {tot:tot,by:by,sc:sc};
+}
+function hhmm(iso){var d=new Date(iso); return d.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit",second:"2-digit"})}
+var shown=0, tickTimer=null;
+function renderTicker(newOne){
+  var T=totals();
+  var target=T.tot, step=(target-shown)/12, n=0;
+  clearInterval(tickTimer);
+  tickTimer=setInterval(function(){n++; shown+=step; if(n>=12||Math.abs(target-shown)<0.05){shown=target;clearInterval(tickTimer)} $("bigNum").textContent=nf.format(shown)},40);
+  $("gridShow").textContent=nf0.format(EF.grid.v);
+  var h=""; events.slice(0,5).forEach(function(e,i){
+    h+="<div class='ev"+(i===0&&newOne?" new":"")+"'><span>"+esc(TYPES[e.activity_type]?TYPES[e.activity_type].label:e.activity_type)+" · "+esc(e.camera_id||"")+" · "+esc(e.quantity)+" "+esc(e.unit||"")+"</span><b>+"+nf.format(evCO2(e))+" kg</b></div>";
+  });
+  $("tickerFeed").innerHTML=h||"<div class='small' style='opacity:.7'>No events yet.</div>";
+}
+function renderLedger(){
+  var T=totals();
+  $("kTotal").textContent=nf.format(T.tot); $("kCount").textContent=events.length;
+  var top=Object.keys(T.by).sort(function(a,b){return T.by[b]-T.by[a]})[0];
+  $("kTop").textContent=top?(TYPES[top]?TYPES[top].label:top):"–";
+  $("gridVal").textContent=nf0.format(EF.grid.v);
+  var maxv=Math.max.apply(null,Object.keys(T.by).map(function(k){return T.by[k]}).concat([1]));
+  var h=""; Object.keys(T.by).sort(function(a,b){return T.by[b]-T.by[a]}).forEach(function(k){
+    var hs=TYPES[k]?TYPES[k].scope:3;
+    h+="<div style='margin-bottom:12px'><div class='row' style='justify-content:space-between'><span>"+esc(TYPES[k]?TYPES[k].label:k)+" <span class='chip "+(hs===1?"f":hs===2?"t":"g")+"'>Scope "+hs+"</span></span><b class='num'>"+nf.format(T.by[k])+" kg</b></div><div class='bar'><i style='background:"+SCOPEINFO[hs].color+";width:"+(T.by[k]/maxv*100)+"%'></i></div></div>";
+  });
+  $("hotspots").innerHTML=h||"<p class='muted'>No data.</p>";
+  var sh="",tt=T.tot||1;
+  [1,2,3].forEach(function(s){
+    var I=SCOPEINFO[s], n=events.filter(function(e){return evScope(e)===s}).length;
+    sh+="<div style='margin-bottom:18px'><div class='row' style='justify-content:space-between'><b>"+I.name+"</b><b class='num'>"+nf.format(T.sc[s])+" kg ("+nf0.format(T.sc[s]/tt*100)+"%)</b></div><div class='bar'><i style='background:"+I.color+";width:"+(T.sc[s]/tt*100)+"%'></i></div><div class='small muted' style='margin-top:6px'>"+I.def+" <b>Here:</b> "+I.ex+". <b>Data from:</b> "+I.src+". "+n+" events.</div></div>";
+  });
+  $("scopes").innerHTML=sh;
+  var b=""; events.slice(0,60).forEach(function(e,i){
+    b+="<tr class='click' tabindex='0' data-i='"+i+"'><td>"+esc(hhmm(e.end_ts))+"</td><td>"+esc(e.camera_id||"")+"</td><td>"+esc(TYPES[e.activity_type]?TYPES[e.activity_type].label:e.activity_type)+"</td><td class='num'>"+esc(e.quantity)+" "+esc(e.unit||"")+"</td><td class='num'>"+esc(e.confidence)+"</td><td><span class='chip "+(evScope(e)===1?"f":evScope(e)===2?"t":"g")+"'>Scope "+evScope(e)+"</span></td><td class='num'>"+nf.format(evCO2(e))+"</td></tr>";
+  });
+  $("ledgerBody").innerHTML=b||"<tr><td colspan='7' class='muted'>Ledger is empty. Resume the feed or import events.</td></tr>";
+  $("ledgerBody").querySelectorAll("tr.click").forEach(function(r){
+    function sel(){var e=events[+r.dataset.i]; var o=JSON.parse(JSON.stringify(e)); o.co2e_kg=Math.round(evCO2(e)*100)/100; o.scope=evScope(e); var fu={}; Object.keys(EF).forEach(function(k){fu[k]=EF[k].v}); o.factors_used=fu; $("evJson").textContent=JSON.stringify(o,null,2)}
+    r.addEventListener("click",sel); r.addEventListener("keydown",function(ev){if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();sel()}});
+  });
+}
+function addEvent(e,silent){events.unshift(e); if(events.length>500) events.length=500; if(!silent){renderTicker(true);renderLedger();}}
+function seed(){var must=["waste_landfill","hvac_unoccupied","third_party_freight","truck_idling","flight_travel","lights_unoccupied","waste_burning"]; for(var i=14;i>=1;i--) addEvent(makeEvent(i*95,i<=must.length?must[i-1]:undefined),true); renderTicker(false); renderLedger();}
+setInterval(function(){ if(!paused){addEvent(makeEvent(0));} },2800);
+
+$("pauseBtn").addEventListener("click",function(){paused=!paused; this.textContent=paused?"Resume feed":"Pause feed"; $("tickerCard").classList.toggle("paused",paused)});
+$("clearBtn").addEventListener("click",function(){events=[];shown=0;renderTicker(false);renderLedger()});
+$("gridSlider").addEventListener("input",function(){EF.grid.v=+this.value; renderEF(); refreshAll()});
+$("importBtn").addEventListener("click",function(){$("importFile").click()});
+$("importFile").addEventListener("change",function(){
+  var f=this.files&&this.files[0]; if(!f) return;
+  if(f.size>2*1024*1024){$("importMsg").textContent="File is over 2 MB. Split it and try again.";return}
+  var rd=new FileReader();
+  rd.onload=function(){
+    try{
+      var arr=JSON.parse(rd.result); if(!Array.isArray(arr)) throw new Error("Top level must be a JSON array of events.");
+      var ok=0,bad=0;
+      arr.slice(0,500).forEach(function(o){
+        if(o&&TYPES[o.activity_type]&&isFinite(+o.quantity)&&+o.quantity>=0){
+          addEvent({site_id:String(o.site_id||"imported"),camera_id:String(o.camera_id||"imported"),activity_type:o.activity_type,confidence:isFinite(+o.confidence)?+o.confidence:1,start_ts:o.start_ts||new Date().toISOString(),end_ts:o.end_ts||new Date().toISOString(),quantity:+o.quantity,unit:TYPES[o.activity_type].unit,metadata:(o.metadata&&typeof o.metadata==="object")?o.metadata:{}},true); ok++;
+        } else bad++;
+      });
+      renderTicker(true); renderLedger();
+      $("importMsg").textContent="Imported "+ok+" events"+(bad?(", skipped "+bad+" with unknown activity_type or invalid quantity"):"")+". Known types: "+Object.keys(TYPES).join(", ")+".";
+    }catch(err){ $("importMsg").textContent="Could not read file: "+err.message; }
+  };
+  rd.readAsText(f); this.value="";
+});
+
+/* ---------- saving files (viewer-approved) ---------- */
+var dl=null;
+try{ if(window.claude&&claude.use){ claude.use("downloads").then(function(d){dl=d}).catch(function(){}); } }catch(e){}
+function showFallback(name,data){ $("fbName").textContent=name; $("fbText").value=data; $("fbMsg").textContent=""; $("fb").hidden=false; $("fbText").focus(); $("fbText").select(); }
+$("fbClose").addEventListener("click",function(){$("fb").hidden=true});
+$("fbCopy").addEventListener("click",function(){
+  var ta=$("fbText"); ta.focus(); ta.select();
+  function legacy(){ try{ $("fbMsg").textContent=document.execCommand("copy")?"Copied.":"Press Ctrl+C (or long-press, Copy)."; }catch(e){ $("fbMsg").textContent="Press Ctrl+C (or long-press, Copy)."; } }
+  if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(ta.value).then(function(){$("fbMsg").textContent="Copied."}).catch(legacy); } else legacy();
+});
+function saveFile(name,data,msgEl){
+  if(!dl){ msgEl.textContent="Saving isn't available in this view, so the content is shown to copy."; showFallback(name,data); return; }
+  dl.save({filename:name,data:data}).then(function(){msgEl.textContent="Saved "+name+"."}).catch(function(e){
+    if(e&&e.code==="declined"){ msgEl.textContent="Save cancelled."; return; }
+    msgEl.textContent="Saving didn't work here, so the content is shown to copy."; showFallback(name,data);
+  });
+}
+function csvCell(v){var s=String(v); return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s}
+function ledgerCSV(){
+  var rows=[["site_id","camera_id","activity_type","start_ts","end_ts","quantity","unit","confidence","scope","kgCO2e","grid_g_per_kwh","diesel_kg_per_l"]];
+  events.slice().reverse().forEach(function(e){rows.push([e.site_id,e.camera_id,e.activity_type,e.start_ts,e.end_ts,e.quantity,e.unit,e.confidence,evScope(e),evCO2(e).toFixed(3),EF.grid.v,EF.diesel.v])});
+  return rows.map(function(r){return r.map(csvCell).join(",")}).join("\n");
+}
+$("csvBtn").addEventListener("click",function(){saveFile("cfip-ledger.csv",ledgerCSV(),$("importMsg"))});
+$("csvBtn2").addEventListener("click",function(){saveFile("cfip-ledger.csv",ledgerCSV(),$("repMsg"))});
+$("sampleBtn").addEventListener("click",function(){
+  var s=[{site_id:"factory-01",camera_id:"cam-07",activity_type:"truck_idling",confidence:0.91,start_ts:"2026-10-06T10:12:00Z",end_ts:"2026-10-06T10:18:00Z",quantity:6,unit:"minutes",metadata:{vehicle_class:"heavy_truck"}},{site_id:"factory-01",camera_id:"cam-11",activity_type:"hvac_unoccupied",confidence:0.88,start_ts:"2026-10-06T13:00:00Z",end_ts:"2026-10-06T14:00:00Z",quantity:60,unit:"minutes",metadata:{}},{site_id:"factory-01",camera_id:"vendor-manifest",activity_type:"waste_landfill",confidence:1,start_ts:"2026-10-06T09:00:00Z",end_ts:"2026-10-06T09:00:00Z",quantity:120,unit:"kg",metadata:{}}];
+  saveFile("sample-events.json",JSON.stringify(s,null,2),$("importMsg"));
+});
+
+/* ---------- calculator ---------- */
+function renderCalc(){
+  var items=[
+    ["Electricity",2,num("c_elec")*EF.grid.v/1000],
+    ["Diesel (all fleet fuel, includes idling)",1,num("c_diesel")*EF.diesel.v],
+    ["Flights",3,num("c_flight")*EF.flight.v],
+    ["Landfill waste",3,num("c_waste")*EF.landfill.v],
+    ["Waste burned on site",1,num("c_burn")*EF.burn.v]
+  ];
+  var idleL=num("c_idle")/60*EF.idleLph.v, idleKg=idleL*EF.diesel.v;
+  var tot=0,sc={1:0,2:0,3:0},h="";
+  items.forEach(function(r){
+    tot+=r[2]; sc[r[1]]+=r[2];
+    h+="<tr><td>"+r[0]+"</td><td>Scope "+r[1]+"</td><td class='num'>"+nf.format(r[2])+"</td></tr>";
+    if(r[0].indexOf("Diesel")===0) h+="<tr><td class='muted small'>&nbsp;&nbsp;&nbsp;of which truck idling ("+nf.format(idleL)+" L)</td><td class='muted small'>Scope 1</td><td class='num muted small'>"+nf.format(idleKg)+"</td></tr>";
+  });
+  h+="<tr><td><b>Total</b></td><td></td><td class='num'><b>"+nf.format(tot)+"</b></td></tr>";
+  [1,2,3].forEach(function(s){ h+="<tr><td class='muted small'>Scope "+s+" subtotal</td><td></td><td class='num muted small'>"+nf.format(sc[s])+" ("+nf0.format(tot?sc[s]/tot*100:0)+"%)</td></tr>"; });
+  if(idleL>num("c_diesel")) h+="<tr><td colspan='3'><div class='note'>Idling fuel ("+nf.format(idleL)+" L) is larger than the diesel bought. Idling is part of that diesel, so check the two inputs.</div></td></tr>";
+  $("calcBody").innerHTML=h;
+}
+["c_elec","c_diesel","c_idle","c_flight","c_waste","c_burn"].forEach(function(id){$(id).addEventListener("input",renderCalc)});
+
+/* ---------- digital twin: Monte Carlo ---------- */
+var SC=[
+  {id:"hvac",name:"HVAC schedule optimisation",cat:"hvac",mean:.12,sd:.04,capex:300000,diff:"Easy",months:2,verify:"BMS runtime and smart-meter kWh against baseline"},
+  {id:"led",name:"LED lighting retrofit",cat:"light",mean:.5,sd:.08,capex:900000,diff:"Medium",months:3,verify:"Lighting circuit sub-meter kWh"},
+  {id:"idle",name:"Idling reduction with camera alerts",cat:"diesel",mean:.04,sd:.015,capex:150000,diff:"Easy",months:1,verify:"Weekly idling minutes counted by cameras"},
+  {id:"route",name:"Route optimisation",cat:"diesel",mean:.08,sd:.03,capex:400000,diff:"Easy",months:2,verify:"Fleet GPS distance and fuel logs"},
+  {id:"waste",name:"Waste diversion and segregation",cat:"waste",mean:.5,sd:.1,capex:500000,diff:"Medium",months:4,verify:"Vendor waste manifests and bin cameras"},
+  {id:"solar",name:"Rooftop solar with storage",cat:"solar",mean:.25,sd:.05,capex:12000000,diff:"Hard",months:8,verify:"Inverter generation and import meter"},
+  {id:"ev",name:"EV fleet transition (net of charging)",cat:"diesel",mean:.25,sd:.08,capex:6000000,diff:"Hard",months:9,verify:"Fuel logs and charger kWh"}
+];
+var scState={}; SC.forEach(function(s){scState[s.id]={on:(s.id==="hvac"||s.id==="led"||s.id==="route"||s.id==="idle"),adopt:100}});
+function renderScList(){
+  var h=""; SC.forEach(function(s){
+    h+="<div class='sc'><input type='checkbox' id='ck_"+s.id+"' "+(scState[s.id].on?"checked":"")+" aria-label='Include "+esc(s.name)+"'><div><label for='ck_"+s.id+"' style='color:var(--ink);font-weight:600;margin:0'>"+esc(s.name)+"</label><div class='small muted'>Assumed saving "+nf0.format(s.mean*100)+"% ± "+nf.format(s.sd*100)+" · capex "+inr(s.capex)+" · "+s.diff+", about "+s.months+" mo</div></div><div class='sl'><input type='range' min='0' max='100' value='"+scState[s.id].adopt+"' id='ad_"+s.id+"' aria-label='Adoption of "+esc(s.name)+"'><span id='adv_"+s.id+"'>"+scState[s.id].adopt+"%</span></div></div>";
+  });
+  $("scList").innerHTML=h;
+  SC.forEach(function(s){
+    $("ck_"+s.id).addEventListener("change",function(){scState[s.id].on=this.checked});
+    $("ad_"+s.id).addEventListener("input",function(){scState[s.id].adopt=+this.value;$("adv_"+s.id).textContent=this.value+"%"});
+  });
+}
+function gauss(){var u=0,v=0;while(u===0)u=Math.random();while(v===0)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+function site(){return {elec:num("s_elec"),hvac:num("s_hvac")/100,light:num("s_light")/100,diesel:num("s_diesel"),waste:num("s_waste"),tariff:num("s_tariff"),dprice:num("s_dprice"),budget:num("s_budget")}}
+function emissions(S,sv){ // sv: saving fractions per scenario id
+  var hv=S.elec*S.hvac*(1-(sv.hvac||0)), lt=S.elec*S.light*(1-(sv.led||0)), ot=S.elec*Math.max(0,1-S.hvac-S.light);
+  var el=(hv+lt+ot)*(1-(sv.solar||0));
+  var di=S.diesel*(1-(sv.ev||0))*(1-(sv.route||0))*(1-(sv.idle||0));
+  var wa=S.waste*(1-(sv.waste||0));
+  var kg=el*EF.grid.v/1000+di*EF.diesel.v+wa*1000*EF.landfill.v;
+  var rs=(S.elec-el)*S.tariff+(S.diesel-di)*S.dprice;
+  return {kg:kg,rs:rs};
+}
+function pct(a,p){var i=(a.length-1)*p,lo=Math.floor(i),hi=Math.ceil(i);return a[lo]+(a[hi]-a[lo])*(i-lo)}
+function simulate(ids,runs){
+  var S=site(), base=emissions(S,{}).kg, red=[],sav=[],alone={}; var capex=0;
+  SC.forEach(function(s){alone[s.id]={t:[],r:[]}; if(ids.indexOf(s.id)>=0) capex+=s.capex*scAdopt(s.id)});
+  for(var i=0;i<runs;i++){
+    var sv={};
+    SC.forEach(function(s){var a=scAdopt(s.id); sv[s.id]=Math.min(.95,Math.max(0,(s.mean+gauss()*s.sd)*a))});
+    var sel={}; ids.forEach(function(id){sel[id]=sv[id]});
+    var e=emissions(S,sel); red.push((base-e.kg)/1000); sav.push(e.rs);
+    SC.forEach(function(s){var o={}; o[s.id]=sv[s.id]; var x=emissions(S,o); alone[s.id].t.push((base-x.kg)/1000); alone[s.id].r.push(x.rs)});
+  }
+  red.sort(function(a,b){return a-b}); sav.sort(function(a,b){return a-b});
+  var al={}; SC.forEach(function(s){var t=alone[s.id].t.sort(function(a,b){return a-b}),r=alone[s.id].r.sort(function(a,b){return a-b}); al[s.id]={p10:pct(t,.1),p50:pct(t,.5),p90:pct(t,.9),rs50:pct(r,.5)}});
+  return {base:base/1000,red:red,sav:sav,capex:capex,alone:al,p10:pct(red,.1),p50:pct(red,.5),p90:pct(red,.9),rs50:pct(sav,.5)};
+}
+function scAdopt(id){return scState[id].adopt/100}
+function selectedIds(){return SC.filter(function(s){return scState[s.id].on}).map(function(s){return s.id})}
+var SHORTN={idle:"Idling alerts (cameras)",waste:"Waste diversion",ev:"EV fleet transition",solar:"Rooftop solar + storage",hvac:"HVAC scheduling",led:"LED retrofit",route:"Route optimisation"};
+function drawBars(res){
+  var W=560,rowH=34,H=SC.length*rowH+30,L=210; var mx=Math.max.apply(null,SC.map(function(s){return res.alone[s.id].p90}).concat([1]));
+  var svg="<svg viewBox='0 0 "+W+" "+H+"' width='100%' style='min-width:480px' role='img' aria-label='Reduction per action with uncertainty range'>";
+  SC.forEach(function(s,i){
+    var y=i*rowH+12,a=res.alone[s.id],sx=function(v){return L+(v/mx)*(W-L-40)};
+    svg+="<text x='0' y='"+(y+13)+"' font-size='12.5'>"+esc(SHORTN[s.id]||s.name)+"</text>";
+    svg+="<rect x='"+L+"' y='"+y+"' width='"+Math.max(1,sx(a.p50)-L)+"' height='16' rx='3' fill='"+(scState[s.id].on?"var(--green)":"var(--line)")+"'/>";
+    svg+="<line x1='"+sx(a.p10)+"' x2='"+sx(a.p90)+"' y1='"+(y+8)+"' y2='"+(y+8)+"' stroke='var(--ink)' stroke-width='1.5'/>";
+    svg+="<line x1='"+sx(a.p10)+"' x2='"+sx(a.p10)+"' y1='"+(y+3)+"' y2='"+(y+13)+"' stroke='var(--ink)'/><line x1='"+sx(a.p90)+"' x2='"+sx(a.p90)+"' y1='"+(y+3)+"' y2='"+(y+13)+"' stroke='var(--ink)'/>";
+    svg+="<text x='"+(sx(a.p90)+6)+"' y='"+(y+13)+"' font-size='12'>"+nf.format(a.p50)+"</text>";
+  });
+  $("chartBars").innerHTML=svg+"</svg>";
+}
+function drawHist(res){
+  var W=560,H=200,B=24,bins=24,mn=res.red[0],mx=res.red[res.red.length-1]; if(mx-mn<1e-9){mx=mn+1}
+  var c=new Array(bins).fill(0); res.red.forEach(function(v){var k=Math.min(bins-1,Math.floor((v-mn)/(mx-mn)*bins));c[k]++}); var m=Math.max.apply(null,c);
+  var bw=(W-20)/bins,svg="<svg viewBox='0 0 "+W+" "+H+"' width='100%' style='min-width:480px' role='img' aria-label='Histogram of combined reduction'>";
+  c.forEach(function(n,i){var h=(n/m)*(H-B-10),x=10+i*bw,mid=mn+(i+.5)*(mx-mn)/bins; var inR=mid>=res.p10&&mid<=res.p90; svg+="<rect x='"+x+"' y='"+(H-B-h)+"' width='"+(bw-2)+"' height='"+h+"' fill='"+(inR?"var(--green)":"var(--line)")+"'/>"});
+  svg+="<text x='10' y='"+(H-6)+"' font-size='12'>"+nf.format(mn)+" t</text><text x='"+(W-10)+"' y='"+(H-6)+"' font-size='12' text-anchor='end'>"+nf.format(mx)+" t</text><text x='"+(W/2)+"' y='"+(H-6)+"' font-size='12' text-anchor='middle'>green = middle 80% of outcomes</text></svg>";
+  $("chartHist").innerHTML=svg;
+}
+function runMC(){
+  var ids=selectedIds(); if(!ids.length){$("mcMsg").textContent="Select at least one action."; return}
+  $("mcMsg").textContent="Running 2,000 simulations…";
+  getSim(ids).then(function(r){
+    lastTwin=r;
+    $("r_base").textContent=nf0.format(r.base);
+    $("r_red").textContent=nf0.format(r.p50)+" t"; $("r_redl").textContent="saved per year, median (P10 "+nf0.format(r.p10)+" to P90 "+nf0.format(r.p90)+")";
+    $("r_sav").textContent=inr(r.rs50);
+    $("r_capex").textContent=inr(r.capex);
+    $("r_pay").textContent=r.rs50>0?nf.format(r.capex/r.rs50):"–";
+    var S=site(), fl="";
+    if(r.capex>S.budget) fl="<div class='note'>Capex of "+inr(r.capex)+" is over your budget cap of "+inr(S.budget)+". Remove an action or lower adoption.</div>";
+    else fl="<div class='note' style='border-color:var(--green);background:var(--green-soft)'>Within budget cap. That is "+nf.format(r.p50/r.base*100)+"% of baseline emissions removed at the median.</div>";
+    $("r_flag").innerHTML=fl; drawBars(r); drawHist(r);
+    $("mcMsg").textContent="Done. Calculated by: "+r.engine+".";
+  });
+}
+var lastTwin=null, lastPlan=null;
+$("runMC").addEventListener("click",runMC);
+
+/* ---------- advisor ---------- */
+function localPlan(note){
+  var budget=num("a_budget"), goal=num("a_goal")/100, months=num("a_months");
+  var saved={}; SC.forEach(function(s){saved[s.id]=scState[s.id].adopt}); SC.forEach(function(s){scState[s.id].adopt=100});
+  var all=simulate(SC.map(function(s){return s.id}),600), base=all.base;
+  var cand=SC.filter(function(s){return s.months<=months}).map(function(s){var a=all.alone[s.id]; return {s:s,t:a.p50,cost:s.capex,perT:a.p50>0?s.capex/(a.p50*10):Infinity,pay:a.rs50>0?s.capex/a.rs50:Infinity}}).filter(function(c){return c.t>0});
+  cand.sort(function(a,b){return a.perT-b.perT});
+  var chosen=[],spent=0,ids=[];
+  for(var i=0;i<cand.length;i++){
+    var c=cand[i]; if(spent+c.cost>budget) continue;
+    chosen.push(c); spent+=c.cost; ids.push(c.s.id);
+    var r=simulate(ids,400); if(r.p50/base>=goal) break;
+  }
+  var fin=ids.length?simulate(ids,1500):null;
+  SC.forEach(function(s){scState[s.id].adopt=saved[s.id]});
+  lastPlan={chosen:chosen,fin:fin,base:base,goal:goal,budget:budget,spent:spent,months:months,role:$("a_role").value,engine:"browser"+(note?" ("+note+")":"")};
+  renderPlan();
+}
+function renderPlan(){
+  var P=lastPlan; if(!P) return;
+  var h="<h3 style='margin-bottom:10px'>Your plan</h3>";
+  if(!P.chosen.length){ h+="<div class='note'>No action fits a budget of "+inr(P.budget)+" within "+P.months+" months. Raise the budget or extend the timeline.</div>"; $("planCard").innerHTML=h; $("askBtn").hidden=true; return}
+  var pc=P.fin.p50/P.base*100, met=P.fin.p50/P.base>=P.goal;
+  h+="<p>"+(met?"This plan reaches your "+nf0.format(P.goal*100)+"% goal at the median.":"Within your budget the best achievable cut is about "+nf.format(pc)+"%, short of your "+nf0.format(P.goal*100)+"% goal.")+" Expected reduction: <b>"+nf0.format(P.fin.p50)+" tCO₂e/yr</b> (range "+nf0.format(P.fin.p10)+" to "+nf0.format(P.fin.p90)+"), spend "+inr(P.spent)+", payback "+(P.fin.rs50>0?nf.format(P.spent/P.fin.rs50):"–")+" years.</p>";
+  h+="<div class='scroll'><table><thead><tr><th>Action</th><th class='num'>tCO₂e/yr</th><th class='num'>Cost</th><th class='num'>Payback (yrs)</th><th>Difficulty</th><th>Verify with</th></tr></thead><tbody>";
+  P.chosen.forEach(function(c){h+="<tr><td>"+esc(c.s.name)+"<div class='small muted'>about "+c.s.months+(c.s.months===1?" month":" months")+"</div></td><td class='num'>"+nf0.format(c.t)+"</td><td class='num'>"+inr(c.cost)+"</td><td class='num'>"+(isFinite(c.pay)?nf.format(c.pay):"no cash saving")+"</td><td>"+c.s.diff+"</td><td class='small'>"+esc(c.s.verify)+"</td></tr>"});
+  h+="</tbody></table></div><p class='small muted' style='margin-top:10px'>Ranked by rupees per tonne over a 10-year life, no discounting. Combined figure is re-simulated so overlaps are not double counted. Calculated by: "+esc(P.engine||"browser")+".</p>";
+  $("planCard").innerHTML=h; $("askBtn").hidden=!sampleFn;
+  window.__plan=P;
+}
+$("planBtn").addEventListener("click",function(){this.disabled=true;var b=this;setTimeout(function(){buildPlan();b.disabled=false},20)});
+
+var sampleFn=null;
+try{ if(window.claude&&claude.use){ claude.use("sample").then(function(f){sampleFn=f; if(f&&lastPlan) $("askBtn").hidden=false}).catch(function(){}); } }catch(e){}
+$("askBtn").addEventListener("click",function(){
+  var P=lastPlan; if(!P||!sampleFn) return;
+  var data={role:P.role,budget_inr:P.budget,goal_percent:P.goal*100,months:P.months,baseline_tCO2e_per_year:Math.round(P.base),expected_reduction_tCO2e_per_year:{p10:Math.round(P.fin.p10),median:Math.round(P.fin.p50),p90:Math.round(P.fin.p90)},total_spend_inr:P.spent,payback_years:P.fin.rs50>0?+(P.spent/P.fin.rs50).toFixed(1):null,actions:P.chosen.map(function(c){return {name:c.s.name,tCO2e_per_year:Math.round(c.t),cost_inr:c.cost,months:c.s.months,difficulty:c.s.diff,verify_with:c.s.verify}})};
+  var prompt="You are the advisor inside a carbon-management platform. Write a short, practical explanation of the plan below for a reader whose role is '"+P.role+"'.\nRules: use ONLY the numbers in the JSON; do not invent figures, rebates, or regulations; say plainly that savings are estimates with a range; max 220 words; plain text, no markdown headings; end with 'First three steps this week:' and exactly three short steps; mention how each result will be verified.\nPLAN JSON:\n"+JSON.stringify(data);
+  $("narrCard").hidden=false; $("narr").textContent="Thinking…"; this.disabled=true; var btn=this;
+  sampleFn(prompt,{modelTier:"quick",onText:function(t){$("narr").textContent=t.text}}).then(function(r){$("narr").textContent=r.text}).catch(function(e){
+    $("narr").textContent=(e&&e.code==="not_granted")?"Claude access was not allowed, so no explanation was generated. The plan above is unaffected.":"Could not generate an explanation right now ("+(e&&e.message?e.message:"error")+"). The plan above is unaffected.";
+  }).then(function(){btn.disabled=false});
+});
+
+
+/* ---------- optional backend connection ---------- */
+var apiBase=null; // null = browser only; "" = same origin as this page; otherwise a URL
+function ef2api(){return {diesel_kg_per_l:EF.diesel.v,grid_g_per_kwh:EF.grid.v,idle_l_per_h:EF.idleLph.v,hvac_kw:EF.hvacKw.v,light_kw:EF.lightKw.v,burn_kg_per_kg:EF.burn.v,landfill_kg_per_kg:EF.landfill.v,freight_kg_per_tkm:EF.freight.v,flight_kg_per_km:EF.flight.v}}
+function site2api(){var S=site(); return {elec_kwh:S.elec,hvac_share:S.hvac,light_share:S.light,diesel_l:S.diesel,waste_t:S.waste,tariff:S.tariff,diesel_price:S.dprice}}
+function apiCall(path,method,body){
+  var o={method:method||"GET"}; if(body!==undefined){o.headers={"Content-Type":"application/json"};o.body=JSON.stringify(body)}
+  return fetch(apiBase+path,o).then(function(r){return r.json().catch(function(){return {}}).then(function(j){
+    if(!r.ok){var d=j&&j.detail; throw new Error(typeof d==="string"?d:Array.isArray(d)?String(d[0]&&d[0].msg?d[0].msg:d[0]):("HTTP "+r.status))}
+    return j})});
+}
+function setApi(base){
+  apiBase=base; var on=base!==null;
+  $("apiChip").textContent=on?("API: "+(base===""?"this server":base)):"Browser (offline)";
+  $("apiChip").className="chip"+(on?" g":"");
+  $("apiCompare").disabled=!on; $("apiSync").disabled=!on;
+}
+function connect(url){
+  url=(url||"").trim().replace(/\/+$/,"");
+  return fetch(url+"/health").then(function(r){return r.json()}).then(function(j){
+    if(!j||j.status!=="ok"||j.service!=="cfip") throw new Error("not a Carbonex API");
+    setApi(url); try{ if(url) localStorage.setItem("cfip_api",url) }catch(e){}; return true;
+  });
+}
+function remoteSim(ids,runs){
+  var adoption={}; SC.forEach(function(s){adoption[s.id]=scAdopt(s.id)});
+  return apiCall("/simulate","POST",{site:site2api(),scenario_ids:ids,runs:runs,adoption:adoption,factors:ef2api(),return_samples:true}).then(function(j){
+    var al={}; Object.keys(j.alone).forEach(function(k){var a=j.alone[k]; al[k]={p10:a.p10,p50:a.p50,p90:a.p90,rs50:a.inr50}});
+    return {base:j.baseline_t,red:j.reduction_samples_t,sav:[],capex:j.capex,alone:al,p10:j.p10,p50:j.p50,p90:j.p90,rs50:j.inr_saved_p50,engine:"API"};
+  });
+}
+function localSim(ids,runs){ return new Promise(function(res){setTimeout(function(){var r=simulate(ids,runs); r.engine="browser"; res(r)},30)}) }
+function getSim(ids){
+  if(apiBase==null) return localSim(ids,2000);
+  return remoteSim(ids,2000).catch(function(e){
+    return localSim(ids,2000).then(function(r){r.engine="browser (API failed: "+e.message+")"; return r});
+  });
+}
+function buildPlan(){
+  if(apiBase==null) return localPlan();
+  var goal=num("a_goal"), budget=num("a_budget"), months=num("a_months");
+  apiCall("/plan","POST",{site:site2api(),budget_inr:budget,goal_percent:goal,months:months,factors:ef2api()}).then(function(j){
+    var chosen=j.actions.map(function(a){var s=SC.filter(function(x){return x.id===a.id})[0]; return {s:s,t:a.tco2e_p50,cost:a.capex,pay:a.payback_years==null?Infinity:a.payback_years}});
+    var f=j.final?{p10:j.final.p10,p50:j.final.p50,p90:j.final.p90,rs50:j.final.inr_saved_p50}:null;
+    lastPlan={chosen:chosen,fin:f,base:j.baseline_t,goal:goal/100,budget:budget,spent:j.spent,months:months,role:$("a_role").value,engine:"API"};
+    renderPlan();
+  }).catch(function(e){ localPlan("API failed: "+e.message); });
+}
+$("apiConnect").addEventListener("click",function(){
+  var u=$("apiUrl").value||"http://127.0.0.1:8000"; $("apiMsg").textContent="Connecting to "+u+"…";
+  connect(u).then(function(){$("apiMsg").textContent="Connected. Simulation and plan now run on the backend."}).catch(function(){
+    $("apiMsg").textContent="Could not reach a Carbonex API at "+u+". Is it running (uvicorn main:app)? Browser mode still works."});
+});
+$("apiDisconnect").addEventListener("click",function(){setApi(null); $("apiMsg").textContent="Using the browser only."});
+$("apiCompare").addEventListener("click",function(){
+  var ids=selectedIds(); if(!ids.length) ids=SC.map(function(s){return s.id});
+  $("apiMsg").textContent="Comparing…";
+  var loc=simulate(ids,2000);
+  remoteSim(ids,2000).then(function(r){
+    var d=loc.p50>0?Math.abs(r.p50-loc.p50)/loc.p50*100:0;
+    $("apiMsg").textContent="Median reduction: browser "+nf.format(loc.p50)+" t, API "+nf.format(r.p50)+" t (difference "+nf.format(d)+"%). Small differences are normal because each side draws its own random numbers; baselines: "+nf.format(loc.base)+" vs "+nf.format(r.base)+" t.";
+  }).catch(function(e){$("apiMsg").textContent="API call failed: "+e.message});
+});
+$("apiSync").addEventListener("click",function(){
+  var btn=this; btn.disabled=true; $("apiMsg").textContent="Sending "+events.length+" events…";
+  var list=events.slice().reverse(), ok=0, bad=0, why="", i=0, f=ef2api();
+  function next(){
+    var chunk=list.slice(i,i+10); i+=10; if(!chunk.length) return Promise.resolve();
+    return Promise.all(chunk.map(function(e){
+      var b=JSON.parse(JSON.stringify(e)); b.factors=f;
+      return apiCall("/events","POST",b).then(function(){ok++}).catch(function(err){bad++; if(!why) why=err.message});
+    })).then(next);
+  }
+  apiCall("/ledger","DELETE").then(next).then(function(){return apiCall("/ledger")}).then(function(L){
+    var mine=totals().tot, diff=mine>0?Math.abs(L.total_kg-mine)/mine*100:0;
+    $("apiMsg").textContent="Sent "+ok+" events"+(bad?(", "+bad+" rejected (first reason: "+why+")"):"")+". Total kg CO2e: browser "+nf.format(mine)+", API "+nf.format(L.total_kg)+(bad?" (rejected events are not counted by the API)":" (difference "+nf.format(diff)+"%)")+". Events below "+L.min_confidence+" confidence: "+L.low_confidence_events+".";
+  }).catch(function(e){$("apiMsg").textContent="API call failed: "+e.message}).then(function(){btn.disabled=apiBase==null});
+});
+(function auto(){
+  if(location.protocol==="http:"||location.protocol==="https:"){
+    connect("").catch(function(){ var u=null; try{u=localStorage.getItem("cfip_api")}catch(e){} if(u){$("apiUrl").value=u; return connect(u)} }).catch(function(){});
+  } else { var u=null; try{u=localStorage.getItem("cfip_api")}catch(e){} if(u){$("apiUrl").value=u} }
+})();
+
+/* ---------- report ---------- */
+var measured={};
+function renderReport(){
+  var T=totals(); $("rp1").textContent=nf.format(T.sc[1]); $("rp2").textContent=nf.format(T.sc[2]); $("rp3").textContent=nf.format(T.sc[3]);
+  if(!lastPlan||!lastPlan.chosen.length) return;
+  var h=""; lastPlan.chosen.forEach(function(c){
+    var m=measured[c.s.id]; var v=(m!==undefined&&m!==""&&isFinite(+m))?((+m-c.t)/c.t*100):null;
+    h+="<tr><td>"+esc(c.s.name)+"</td><td class='num'>"+nf0.format(c.t)+"</td><td><input type='number' min='0' step='any' data-m='"+c.s.id+"' value='"+(m===undefined?"":esc(m))+"' aria-label='Measured saving for "+esc(c.s.name)+"' style='width:110px'></td><td class='num' id='var_"+c.s.id+"'>"+(v===null?"–":(v>=0?"+":"")+nf.format(v)+"%")+"</td></tr>";
+  });
+  $("verBody").innerHTML=h;
+  $("verBody").querySelectorAll("input").forEach(function(i){i.addEventListener("input",function(){
+    measured[i.dataset.m]=i.value; var c=lastPlan.chosen.filter(function(x){return x.s.id===i.dataset.m})[0]; var el=$("var_"+i.dataset.m); var v=parseFloat(i.value);
+    el.textContent=isFinite(v)?((v-c.t)/c.t*100>=0?"+":"")+nf.format((v-c.t)/c.t*100)+"%":"–";
+  })});
+}
+$("repBtn").addEventListener("click",function(){
+  var T=totals(),p=lastPlan,now=new Date().toLocaleString();
+  var h="<!DOCTYPE html><html lang='en'><meta charset='utf-8'><title>Carbonex summary report</title><body style='font-family:Arial,sans-serif;max-width:760px;margin:30px auto;line-height:1.5;color:#2B1330'>";
+  h+="<h1>Carbonex summary report</h1><p>Generated "+esc(now)+" · site factory-01 (demo data)</p>";
+  h+="<h2>Ledger</h2><p>Total "+nf.format(T.tot)+" kg CO2e across "+events.length+" events. Scope 1: "+nf.format(T.sc[1])+" kg, Scope 2: "+nf.format(T.sc[2])+" kg, Scope 3: "+nf.format(T.sc[3])+" kg. Grid intensity used: "+EF.grid.v+" g/kWh.</p>";
+  h+="<h2>Emission factors used</h2><ul>"+Object.keys(EF).map(function(k){return "<li>"+esc(EF[k].label)+": "+EF[k].v+" "+esc(EF[k].unit)+" ("+esc(EF[k].src)+")</li>"}).join("")+"</ul>";
+  if(p&&p.chosen.length){
+    h+="<h2>Plan</h2><p>Role: "+esc(p.role)+". Budget "+inr(p.budget)+", goal "+nf0.format(p.goal*100)+"%. Expected reduction "+nf0.format(p.fin.p50)+" tCO2e/yr (P10 "+nf0.format(p.fin.p10)+", P90 "+nf0.format(p.fin.p90)+"). Spend "+inr(p.spent)+".</p><ol>"+p.chosen.map(function(c){var m=measured[c.s.id];return "<li>"+esc(c.s.name)+": predicted "+nf0.format(c.t)+" tCO2e/yr"+((m!==undefined&&m!=="")?", measured "+esc(m):"")+"; verify with "+esc(c.s.verify)+"</li>"}).join("")+"</ol>";
+  } else h+="<h2>Plan</h2><p>No plan generated yet.</p>";
+  h+="<p style='color:#76607F;font-size:13px'>Prototype output. Camera events are simulated or imported; factors marked assumption must be replaced with authoritative values before any external reporting.</p></body></html>";
+  saveFile("cfip-summary-report.html",h,$("repMsg"));
+});
+
+/* ---------- overview: what-if panel, theme, pointer effects ---------- */
+var WI_IDS=["hvac","led","idle","route","solar"], wiOn={hvac:true,led:true,idle:true};
+function buildWI(){
+  $("wiTg").innerHTML=WI_IDS.map(function(id){return "<button type='button' class='tg' data-wi='"+id+"' aria-pressed='"+(!!wiOn[id])+"'>"+esc(SHORTN[id])+"</button>"}).join("");
+  $("wiTg").querySelectorAll("button").forEach(function(b){b.addEventListener("click",function(){var k=b.dataset.wi; wiOn[k]=!wiOn[k]; b.setAttribute("aria-pressed",String(!!wiOn[k])); renderWI()})});
+}
+function renderWI(){
+  var S=site(), a=num("wi_ad",100)/100, base=emissions(S,{}), sv={}, capex=0;
+  SC.forEach(function(s){ if(wiOn[s.id]){ sv[s.id]=Math.min(.95,s.mean*a); capex+=s.capex*a; } });
+  var e=emissions(S,sv), t=(base.kg-e.kg)/1000, pc=base.kg>0?(base.kg-e.kg)/base.kg*100:0;
+  $("wi_adv").textContent=nf0.format(a*100)+"%";
+  $("wi_t").textContent=nf0.format(t); $("wi_pc").textContent=nf.format(pc)+"%";
+  $("wi_pay").textContent=e.rs>0?nf.format(capex/e.rs):"–";
+  $("wi_bar").style.width=Math.min(100,pc/60*100)+"%";
+  $("wi_note").textContent=capex>0?("Spend "+inr(capex)+" to save about "+inr(e.rs)+" a year at the average assumed saving. The Digital twin tab shows the full range."):"Select at least one action.";
+}
+$("wi_ad").addEventListener("input",renderWI);
+$("themeBtn").addEventListener("click",function(){
+  var r=document.documentElement, cur=r.getAttribute("data-theme")||(window.matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");
+  r.setAttribute("data-theme",cur==="dark"?"light":"dark");
+});
+var glowRaf=0;
+window.addEventListener("pointermove",function(e){
+  if(!glowRaf) glowRaf=requestAnimationFrame(function(){glowRaf=0; document.body.style.setProperty("--mx",e.clientX+"px"); document.body.style.setProperty("--my",e.clientY+"px")});
+  var c=e.target.closest&&e.target.closest(".bento .card");
+  if(c){var r=c.getBoundingClientRect(); c.style.setProperty("--px",(e.clientX-r.left)+"px"); c.style.setProperty("--py",(e.clientY-r.top)+"px")}
+});
+document.querySelectorAll(".bento .card[data-go]").forEach(function(c){c.addEventListener("keydown",function(ev){if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();showTab(c.dataset.go)}})});
+
+/* ---------- init ---------- */
+function refreshAll(){renderTicker(false);renderLedger();renderCalc();renderWI()}
+renderEF(); renderScList(); renderCalc(); seed(); buildWI(); renderWI();
+})();
+</script>
+</body>
+</html>
